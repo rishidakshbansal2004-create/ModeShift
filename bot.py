@@ -1,4 +1,5 @@
 import os
+import streamlit as st
 from google import genai
 from dotenv import load_dotenv
 from config import MODES
@@ -6,7 +7,15 @@ import time
 from google.genai import types
 load_dotenv()
 
-client = genai.Client(api_key=os.environ["Gem_Api_Key"])
+api_key_resp = os.getenv("Gem_Api_Key")
+
+if not api_key_resp:
+    try:
+        api_key_resp = st.secrets["Gem_Api_Key"]
+    except:
+        pass
+client1 = genai.Client(api_key=api_key_resp)
+
 
 def create_chat_session(mode):
     chat=client.chats.create(
