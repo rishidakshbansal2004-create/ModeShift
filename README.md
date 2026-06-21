@@ -37,7 +37,7 @@ Each mode uses a different Gemini model, deliberately chosen based on the reason
 |---|---|---|
 | Mock Interviewer | `gemini-2.5-flash` | Judgment-heavy (evaluating answer quality, tracking conversation state for a final verdict) but doesn't need top-tier agentic/coding strength. |
 | Code Debugger | `gemini-3.5-flash` | Strongest available reasoning — needed to catch subtle, multi-step bugs (e.g. operator precedence, memory allocation errors) reliably. |
-| Roast&Boost My Resume | `gemini-3.5-flash` | Leans on tone/creativity with  deep multi-step reasoning for judgment; Needs models witthat supports file upload 
+| Roast&Boost My Resume | `gemini-3.5-flash` | Leans on tone/creativity with  deep multi-step reasoning for judgment; Needs model which supports file upload 
 | Friendly Neighbourhood Bot | `gemini-3.1-flash-lite` | Lightweight conversational matching — no complex reasoning required. |
 
 This split was validated through direct side-by-side testing during development (see [`/docs`](#) for sample comparisons) rather than assumed.
