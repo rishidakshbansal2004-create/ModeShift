@@ -53,7 +53,7 @@ This split was validated through direct side-by-side testing during development 
 | Avg. latency — Casual Chat | ~1.2s |
 | Avg. latency — Resume Roast (PDF input) | ~12.3s |
 | Retry handling | Up to 3 automatic retries on transient API failures, with a short backoff between attempts |
-| Est. cost per full session | ~₹3–4 (~$0.04) on the highest-tier model used; lighter modes cost a fraction of that |
+| Est. cost per full session | ₹3–4 ($0.04) on the highest-tier model used; lighter modes cost a fraction of that |
 
 Latency is measured and surfaced live in the UI for every response, not just benchmarked separately — the app tracks its own performance as it runs.
 
