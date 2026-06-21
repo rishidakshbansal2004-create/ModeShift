@@ -1,12 +1,11 @@
 import os
-import streamlit as st
 from google import genai
+import streamlit as st
 from dotenv import load_dotenv
 from config import MODES
 import time
 from google.genai import types
 load_dotenv()
-
 api_key_resp = os.getenv("Gem_Api_Key")
 
 if not api_key_resp:
@@ -14,8 +13,7 @@ if not api_key_resp:
         api_key_resp = st.secrets["Gem_Api_Key"]
     except:
         pass
-client1 = genai.Client(api_key=api_key_resp)
-
+client = genai.Client(api_key=api_key_resp)
 
 def create_chat_session(mode):
     chat=client.chats.create(
