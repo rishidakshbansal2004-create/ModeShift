@@ -156,7 +156,6 @@ The app will open automatically in your browser at `http://localhost:8501`.
 - [ ] Streaming responses (word-by-word output) — deferred intentionally, since it complicates retry-on-failure handling; planned as a separate, focused addition
 - [ ] Per-mode accent colors in the UI, layered on top of the current dark theme
 - [ ] Persistent latency/usage logging for richer performance analytics over time
-- [ ] Deployment to Streamlit Community Cloud
 
 ---
 
