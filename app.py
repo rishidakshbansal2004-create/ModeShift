@@ -118,8 +118,8 @@ else:
         if st.session_state.first_time is None:
             st.info("⚠️ First time: Allow mic permission, then click mic AGAIN to record.")
             st.session_state.first_time="first time"
-        st.write("🎙️ Press the mic and speak your answer:")
-    
+        st.write("🎙️ Press the mic and speak your answer and click it again to stop:")
+        st.info("RED MEANS RECORDING")
     # Pehle audio play karo agar hai
         audio_bytes = audio_recorder(pause_threshold=3.0)
        
