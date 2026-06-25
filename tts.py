@@ -4,7 +4,7 @@ import tempfile
 import os
 
 async def _generate(text, filename):
-    communicate = edge_tts.Communicate(text, voice="en-IN-PrabhatNeural",rate="+40%")
+    communicate = edge_tts.Communicate(text, voice="en-IN-PrabhatNeural",rate="+25%")
     await communicate.save(filename)
 
 def text_to_speech(text):

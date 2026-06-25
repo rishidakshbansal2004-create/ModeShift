@@ -121,10 +121,11 @@ else:
         st.write("🎙️ Press the mic and speak your answer:")
     
     # Pehle audio play karo agar hai
-        audio_bytes = audio_recorder(pause_threshold=5.0)
+        audio_bytes = audio_recorder(pause_threshold=3.0)
        
         if audio_bytes and audio_bytes !=st.session_state.last_processed:
             st.session_state.last_processed=audio_bytes
+
             with st.spinner("🎙️ Processing your answer..."):
                 user_text = transcribe_audio(audio_bytes)
         
