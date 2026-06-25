@@ -48,7 +48,7 @@ This split was validated through direct side-by-side testing during development.
 
 | Metric | Detail |
 |---|---|
-| Avg. latency — Mock Interviewer | ~2.1s |
+| Avg. latency — Mock Interviewer | ~8.1s |
 | Avg. latency — Code Debugger | ~5.1s |
 | Avg. latency — Casual Chat | ~1.2s |
 | Avg. latency — Resume Roast (PDF input) | ~12.3s |
