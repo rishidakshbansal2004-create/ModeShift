@@ -125,7 +125,7 @@ else:
        
         if audio_bytes and audio_bytes !=st.session_state.last_processed:
             st.session_state.last_processed=audio_bytes
-
+        with st.spinner("Brace yourself feedback/next question is coming shortly"):
             with st.spinner("🎙️ Processing your answer..."):
                 user_text = transcribe_audio(audio_bytes)
         
