@@ -14,7 +14,7 @@ ModeShift is a multi-mode AI chatbot built on the Gemini API, where a single app
 
 [![Watch the demo](https://img.youtube.com/vi/Bx9FLCjRE0A/maxresdefault.jpg)](https://youtube.com/watch?v=Bx9FLCjRE0A)
 
-*A full walkthrough of all 4 modes — Mock Interviewer, Code Debugger, Roast&Boost My Resume, and Friendly Neighbourhood Bot. Click to watch.*
+*A full walkthrough of all 4 modes. Click to watch.*
 
 ---
 
@@ -22,25 +22,25 @@ ModeShift is a multi-mode AI chatbot built on the Gemini API, where a single app
 
 | Mode | What it does |
 |---|---|
-| 🎤 **Mock Interviewer** | Conducts a structured, one-question-at-a-time mock interview for any role, gives feedback after every answer (strength, weakness, ideal approach), and closes with an evidence-based final verdict. |
+| 🎤 **Mock Interviewer** | Conducts a structured, one-question-at-a-time voice-driven mock interview. Speak your answer via mic, get feedback after every response, and close with a final verdict. Powered by Groq Whisper STT and ElevenLabs TTS with auto-play responses. |
 | 🐛 **Code Debugger** | Diagnoses bugs in pasted code — logic errors, syntax errors, edge cases, runtime exceptions — and returns structured, snippet-level fixes without rewriting the whole file. |
-| 🎯 **Roast&Boost My Resume** | Upload a resume PDF and get a brutally funny, emoji-heavy roast — paired with genuinely actionable, specific fixes for every section. |
+| 🎯 **Roast&Boost My Resume** | Upload a resume PDF and get a brutally funny, emoji-heavy roast paired with genuinely actionable, specific fixes for every section. |
 | 😄 **Friendly Neighbourhood Bot** | A warm, casual conversational companion that mirrors the user's emotional tone, with built-in boundaries for sensitive topics and region-agnostic crisis-resource handling. |
 
 ---
 
 ## 🧠 Why Different Models Per Mode?
 
-Each mode uses a different Gemini model, deliberately chosen based on the reasoning complexity the task demands rather than defaulting to one model everywhere:
+Each mode uses a different Gemini model, deliberately chosen based on the reasoning complexity the task demands:
 
 | Mode | Model | Why |
 |---|---|---|
-| Mock Interviewer | `gemini-2.5-flash` | Judgment-heavy (evaluating answer quality, tracking conversation state for a final verdict) but doesn't need top-tier agentic/coding strength. |
-| Code Debugger | `gemini-3.5-flash` | Strongest available reasoning — needed to catch subtle, multi-step bugs (e.g. operator precedence, memory allocation errors) reliably. |
-| Roast&Boost My Resume | `gemini-3.5-flash` | Leans on tone/creativity with  deep multi-step reasoning for judgment; Needs model which supports file upload 
-| Friendly Neighbourhood Bot | `gemini-3.1-flash-lite` | Lightweight conversational matching — no complex reasoning required. |
+| Mock Interviewer | `gemini-2.5-flash` | Judgment-heavy but doesn't need top-tier agentic strength. |
+| Code Debugger | `gemini-3.5-flash` | Strongest available reasoning for subtle multi-step bugs. |
+| Roast&Boost My Resume | `gemini-3.5-flash` | Tone/creativity with deep multi-step reasoning; supports file upload. |
+| Friendly Neighbourhood Bot | `gemini-3.1-flash-lite` | Lightweight conversational matching, no complex reasoning required. |
 
-This split was validated through direct side-by-side testing during development (see [`/docs`](#) for sample comparisons) rather than assumed.
+This split was validated through direct side-by-side testing during development.
 
 ---
 
@@ -52,10 +52,8 @@ This split was validated through direct side-by-side testing during development 
 | Avg. latency — Code Debugger | ~5.1s |
 | Avg. latency — Casual Chat | ~1.2s |
 | Avg. latency — Resume Roast (PDF input) | ~12.3s |
-| Retry handling | Up to 3 automatic retries on transient API failures, with a short backoff between attempts |
-| Est. cost per full session | ₹3–4 ($0.04) on the highest-tier model used; lighter modes cost a fraction of that |
-
-Latency is measured and surfaced live in the UI for every response, not just benchmarked separately — the app tracks its own performance as it runs.
+| Retry handling | Up to 3 automatic retries on transient API failures with short backoff |
+| Est. cost per full session | ~₹3-4 ($0.04) on highest-tier model; lighter modes cost a fraction |
 
 ---
 
@@ -64,19 +62,22 @@ Latency is measured and surfaced live in the UI for every response, not just ben
 ```
 ModeShift/
 ├── app.py              # Streamlit UI — landing page, sidebar, chat interface
-├── bot.py               # Gemini API logic — chat sessions, retry handling, PDF input
-├── config.py             # Mode definitions: system prompts + per-mode model assignment
+├── bot.py              # Gemini API logic — chat sessions, retry handling, PDF input
+├── config.py           # Mode definitions: system prompts + per-mode model assignment
+├── stt.py              # Groq Whisper STT — mic audio to text transcription
+├── tts.py              # ElevenLabs TTS — text to voice with auto-play
 ├── .streamlit/
-│   └── config.toml        # Dark theme configuration
-├── .env                  # API key (not committed)
+│   └── config.toml     # Dark theme configuration
+├── .env                # API keys (not committed)
 └── requirements.txt
 ```
 
 **Design decisions worth noting:**
-- **Per-mode chat sessions** — switching modes starts a completely fresh conversation (no cross-mode context bleed), implemented via a single `switch_mode()` helper that resets session state cleanly.
-- **Multimodal PDF input** — resumes are sent directly to Gemini as raw PDF bytes (not pre-extracted text), preserving layout and formatting context that matters for presentation feedback.
-- **Unified chat input for Resume Roast** — text and PDF attachment share a single `st.chat_input(accept_file=True)` box, so the user can roast a resume and ask follow-up questions through the same interface.
-- **Generic retry wrapper** — `call_with_retry()` wraps any API call (text or PDF) uniformly, rather than duplicating retry logic per call type.
+- **Voice-driven Mock Interviewer** — mic input transcribed via Groq Whisper, responses auto-played via ElevenLabs TTS, with silence detection and persistent chat history.
+- **Per-mode chat sessions** — switching modes starts a completely fresh conversation, implemented via a single `switch_mode()` helper that resets session state cleanly.
+- **Multimodal PDF input** — resumes sent directly to Gemini as raw PDF bytes, preserving layout context.
+- **Unified chat input for Resume Roast** — text and PDF attachment share a single `st.chat_input(accept_file=True)` box.
+- **Generic retry wrapper** — `call_with_retry()` wraps any API call uniformly, no duplicate retry logic.
 
 ---
 
@@ -84,6 +85,8 @@ ModeShift/
 
 - **Frontend/UI:** Streamlit
 - **LLM:** Google Gemini API (`google-genai` SDK)
+- **STT:** Groq Whisper (`whisper-large-v3-turbo`)
+- **TTS:** ElevenLabs (`eleven_flash_v2_5`)
 - **Models used:** `gemini-2.5-flash`, `gemini-3.5-flash`, `gemini-3.1-flash-lite`
 - **Language:** Python 3.12
 
@@ -93,25 +96,22 @@ ModeShift/
 
 ### Prerequisites
 - Python 3.10–3.13
-- A Gemini API key ([get one here](https://aistudio.google.com/apikey))
+- Gemini API key ([get one here](https://aistudio.google.com/apikey))
+- Groq API key ([get one here](https://console.groq.com))
+- ElevenLabs API key ([get one here](https://elevenlabs.io))
 
 ### Steps
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/<your-username>/ModeShift.git
+git clone https://github.com/rishidakshbansal2004-create/ModeShift.git
 cd ModeShift
 ```
 
 **2. Create and activate a virtual environment**
 ```bash
 python3 -m venv .venv
-
-# macOS / Linux
-source .venv/bin/activate
-
-# Windows
-.venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 ```
 
 **3. Install dependencies**
@@ -119,16 +119,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**4. Set up your API key**
+**4. Set up your API keys**
 
 Create a `.env` file in the project root:
-```bash
-touch .env
 ```
-
-Add your Gemini API key inside it:
-```
-GEMINI_API_KEY=your_api_key_here
+GEMINI_API_KEY=your_gemini_key
+GROQ_API_KEY=your_groq_key
+ELEVENLABS_API_KEY=your_elevenlabs_key
 ```
 
 **5. Run the app**
@@ -136,26 +133,25 @@ GEMINI_API_KEY=your_api_key_here
 streamlit run app.py
 ```
 
-The app will open automatically in your browser at `http://localhost:8501`.
-
 ---
 
 ## 🚀 Usage
 
-1. On launch, select a mode from the dropdown on the landing page (or use the sidebar anytime to switch).
-2. **Mock Interviewer:** State your target role and experience level to begin. Type `next` only when you're ready to move past feedback to the next question.
-3. **Code Debugger:** Paste your code (and any error messages, if you have them) directly into the chat.
-4. **Roast&Boost My Resume:** Attach your resume PDF using the 📎 icon in the chat input.
+1. Select a mode from the dropdown on the landing page or sidebar.
+2. **Mock Interviewer:** State your role and experience level. Speak your answers via mic — the interviewer responds with voice automatically.
+3. **Code Debugger:** Paste your code and any error messages directly into chat.
+4. **Roast&Boost My Resume:** Attach your resume PDF using the 📎 icon.
 5. **Friendly Neighbourhood Bot:** Just start chatting.
-6. Use the **🔄 Restart** button (top-right of any chat) to reset the current mode's conversation at any time.
+6. Use **🔄 Restart** to reset the current mode anytime.
 
 ---
 
 ## 🔮 Future Improvements
 
-- [ ] Streaming responses (word-by-word output) — deferred intentionally, since it complicates retry-on-failure handling; planned as a separate, focused addition
-- [ ] Per-mode accent colors in the UI, layered on top of the current dark theme
-- [ ] Persistent latency/usage logging for richer performance analytics over time
+- [ ] Streaming responses — deferred intentionally, complicates retry handling; planned as a separate addition
+- [ ] Per-mode accent colors in UI
+- [ ] Persistent latency/usage logging for richer performance analytics
+- [ ] Voice support for additional modes beyond Mock Interviewer
 
 ---
 
@@ -165,4 +161,4 @@ This project is for educational and portfolio purposes.
 
 ---
 
-*Built by Rishi Bansal — Computer Science undergraduate at IIIT Kottayam, specializing in Generative AI and Prompt Engineering.*
+*Built by Rishi Bansal — Computer Science undergraduate at IIIT Kottayam, specializing in Generative AI, RAG pipelines, and AI Agents.*
