@@ -1,6 +1,9 @@
 import streamlit as st
-from config import MODES , MODEL_NAME
-from bot import create_chat_session, send_message,send_pdf
+from config import MODES, MODEL_NAME
+from bot import create_chat_session, send_message, send_pdf
+from audio_recorder_streamlit import audio_recorder
+from stt import transcribe_audio
+from tts import text_to_speech
 
 if "selected_mode" not in st.session_state:
     st.session_state.selected_mode = None
@@ -11,10 +14,21 @@ if "chat" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "first_time" not in st.session_state:
+    st.session_state.first_time=None
+
+if "last_audio" not in st.session_state:
+    st.session_state.last_audio = None
+
+if "last_processed" not in st.session_state:
+    st.session_state.last_processed = None
+
 def switch_mode(new_mode_key):
     st.session_state.selected_mode = new_mode_key
     st.session_state.chat = None
     st.session_state.messages = []
+    st.session_state.first_time=None
+    st.session_state.last_audio=None
     st.rerun()
 st.set_page_config(page_title="ModeShift", page_icon="🚀")
 mode_greetings = {
@@ -95,8 +109,43 @@ else:
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.write(msg["content"])
+
+     # ---- MOCK INTERVIEWER — VOICE MODE ----
+    if st.session_state.selected_mode == "interviewer":
+        if st.session_state.get("last_audio"):
+            st.audio(st.session_state.last_audio, format="audio/mp3", autoplay=True)
+
+        if st.session_state.first_time is None:
+            st.info("⚠️ First time: Allow mic permission, then click mic AGAIN to record.")
+            st.session_state.first_time="first time"
+        st.write("🎙️ Press the mic and speak your answer:")
+    
+    # Pehle audio play karo agar hai
+        audio_bytes = audio_recorder(pause_threshold=5.0)
+       
+        if audio_bytes and audio_bytes !=st.session_state.last_processed:
+            st.session_state.last_processed=audio_bytes
+            with st.spinner("🎙️ Processing your answer..."):
+                user_text = transcribe_audio(audio_bytes)
         
-    if st.session_state.selected_mode == "resume_roast" :
+            if user_text is None:
+                st.warning("Recording too short — please try again!")
+                st.stop()
+        
+            st.session_state.messages.append({"role": "user", "content": user_text})
+        
+            with st.spinner("🧑‍🏫 Interviewer is thinking..."):
+                result = send_message(st.session_state.chat, user_text)
+        
+            st.session_state.messages.append({"role": "assistant", "content": result["text"]})
+        
+            with st.spinner("🔊 Preparing response..."):
+                audio_output = text_to_speech(result["text"])
+        
+            st.session_state.last_audio = audio_output
+            st.rerun()
+   
+    elif st.session_state.selected_mode == "resume_roast" :
         user_input = st.chat_input("Type a message or attach your resume PDF...",accept_file=True,file_type=["pdf"])
         if user_input:
             if user_input.files:

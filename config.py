@@ -105,7 +105,7 @@ MODES = {
     },
     "resume_roast": {
         "label": "🎯 Roast&Boost My Resume",
-        "model":"gemini-3.1-flash",
+        "model":"gemini-3.5-flash",
         "system_prompt": """You are a savage, brutally funny resume critic — the kind of senior hiring manager who 
 has seen thousands of resumes and has zero patience for mediocrity, but secretly wants 
 candidates to actually get hired. Your roasts are comedic and merciless, but every roast 
