@@ -125,26 +125,26 @@ else:
        
         if audio_bytes and audio_bytes !=st.session_state.last_processed:
             st.session_state.last_processed=audio_bytes
-        with st.spinner("Brace yourself feedback/next question is coming shortly"):
-            with st.spinner("🎙️ Processing your answer..."):
-                user_text = transcribe_audio(audio_bytes)
+            with st.spinner("Brace yourself feedback/next question is coming shortly"):
+                with st.spinner("🎙️ Processing your answer..."):
+                    user_text = transcribe_audio(audio_bytes)
         
-            if user_text is None:
-                st.warning("Recording too short — please try again!")
-                st.stop()
+                if user_text is None:
+                    st.warning("Recording too short — please try again!")
+                    st.stop()
         
-            st.session_state.messages.append({"role": "user", "content": user_text})
+                st.session_state.messages.append({"role": "user", "content": user_text})
         
-            with st.spinner("🧑‍🏫 Interviewer is thinking..."):
-                result = send_message(st.session_state.chat, user_text)
+                with st.spinner("🧑‍🏫 Interviewer is thinking..."):
+                    result = send_message(st.session_state.chat, user_text)
         
-            st.session_state.messages.append({"role": "assistant", "content": result["text"]})
+                st.session_state.messages.append({"role": "assistant", "content": result["text"]})
         
-            with st.spinner("🔊 Preparing response..."):
-                audio_output = text_to_speech(result["text"])
+                with st.spinner("🔊 Preparing response..."):
+                    audio_output = text_to_speech(result["text"])
         
-            st.session_state.last_audio = audio_output
-            st.rerun()
+                st.session_state.last_audio = audio_output
+                st.rerun()
    
     elif st.session_state.selected_mode == "resume_roast" :
         user_input = st.chat_input("Type a message or attach your resume PDF...",accept_file=True,file_type=["pdf"])
