@@ -1,24 +1,17 @@
+import edge_tts
+import asyncio
+import tempfile
 import os
-import streamlit as st
-from elevenlabs.client import ElevenLabs
-from dotenv import load_dotenv
 
-load_dotenv()
-api_key_resp=os.getenv("ELEVENLABS_API_KEY")
-if not api_key_resp:
-    try:
-        api_key_resp = st.secrets["ELEVENLABS_API_KEY"]
-    except:
-        pass
-client = ElevenLabs(api_key=api_key_resp)
+async def _generate(text, filename):
+    communicate = edge_tts.Communicate(text, voice="en-IN-PrabhatNeural",rate="+40%")
+    await communicate.save(filename)
 
 def text_to_speech(text):
-    audio = client.text_to_speech.convert(
-        text=text,
-        voice_id="JBFqnCBsd6RMkjVDRZzb",  # George — professional male voice
-        model_id="eleven_flash_v2_5",
-        output_format="mp3_44100_128"
-    )
-    
-    audio_bytes = b"".join(audio)
-    return audio_bytes
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
+        filename = f.name
+    asyncio.run(_generate(text, filename))
+    with open(filename, "rb") as f:
+        audio = f.read()
+    os.unlink(filename)
+    return audio

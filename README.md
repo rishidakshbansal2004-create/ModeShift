@@ -22,7 +22,7 @@ ModeShift is a multi-mode AI chatbot built on the Gemini API, where a single app
 
 | Mode | What it does |
 |---|---|
-| 🎤 **Mock Interviewer** | Conducts a structured, one-question-at-a-time voice-driven mock interview. Speak your answer via mic, get feedback after every response, and close with a final verdict. Powered by Groq Whisper STT and ElevenLabs TTS with auto-play responses. |
+| 🎤 **Mock Interviewer** | Conducts a structured, one-question-at-a-time voice-driven mock interview. Speak your answer via mic, get feedback after every response, and close with a final verdict. Powered by Groq Whisper STT and edge TTS with auto-play responses. |
 | 🐛 **Code Debugger** | Diagnoses bugs in pasted code — logic errors, syntax errors, edge cases, runtime exceptions — and returns structured, snippet-level fixes without rewriting the whole file. |
 | 🎯 **Roast&Boost My Resume** | Upload a resume PDF and get a brutally funny, emoji-heavy roast paired with genuinely actionable, specific fixes for every section. |
 | 😄 **Friendly Neighbourhood Bot** | A warm, casual conversational companion that mirrors the user's emotional tone, with built-in boundaries for sensitive topics and region-agnostic crisis-resource handling. |
@@ -65,7 +65,7 @@ ModeShift/
 ├── bot.py              # Gemini API logic — chat sessions, retry handling, PDF input
 ├── config.py           # Mode definitions: system prompts + per-mode model assignment
 ├── stt.py              # Groq Whisper STT — mic audio to text transcription
-├── tts.py              # ElevenLabs TTS — text to voice with auto-play
+├── tts.py              # edge TTS — text to voice with auto-play
 ├── .streamlit/
 │   └── config.toml     # Dark theme configuration
 ├── .env                # API keys (not committed)
@@ -86,7 +86,7 @@ ModeShift/
 - **Frontend/UI:** Streamlit
 - **LLM:** Google Gemini API (`google-genai` SDK)
 - **STT:** Groq Whisper (`whisper-large-v3-turbo`)
-- **TTS:** ElevenLabs (`eleven_flash_v2_5`)
+- **TTS:** Edge Tts
 - **Models used:** `gemini-2.5-flash`, `gemini-3.5-flash`, `gemini-3.1-flash-lite`
 - **Language:** Python 3.12
 

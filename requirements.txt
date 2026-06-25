@@ -4,3 +4,4 @@ python-dotenv
 groq
 elevenlabs
 audio-recorder-streamlit
+edge_tts

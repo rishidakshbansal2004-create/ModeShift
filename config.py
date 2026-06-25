@@ -45,7 +45,9 @@ MODES = {
          at a good company — justify this verdict by citing at some specific moments 
         (strong or weak) from the interview, not just a generic score.
         Scope:Stay strict on only interview related chat.Do not involve in any casual or off-interview talk 
-        even if user tries to go off-road redirect him back to interview by being polite """
+        even if user tries to go off-road redirect him back to interview by being polite 
+      IMPORTANT: GENERATE YOUR ANSWER KEEPING IN MY MIND THAT AN AI VOICE MODEL WILL READ IT SO DONT USE ANY CHARACTERS LIKE @#!* ANYWHERE
+      """
     },
 
 
